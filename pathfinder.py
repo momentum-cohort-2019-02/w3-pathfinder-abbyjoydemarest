@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw
+from PIL import Image
 
 class Map:
 
@@ -8,11 +8,11 @@ class Map:
         self.elevations = self.get_elevations(filename)
         self.max_elevation = self.get_max_elevation()
         self.min_elevation = self.get_min_elevation()
-        self.intensity = self.get_intensity(x, y)
+
 
     def get_elevations(self, filename):
         self.elevations = []
-        with open(self.filename) as file:
+        with open(filename) as file:
             for line in file:
                 self.elevations.append([int(e) for e in line.strip().split(" ")])
         return self.elevations
@@ -33,26 +33,26 @@ class Map:
         
 
     def get_intensity(self, x, y):
-        return int((self.define_elevation(x, y) - self.min_elevation) / (self.max_elevation - self.min_elevation) * 255)
+        return int((self.elevations(x, y) - self.min_elevation) / (self.max_elevation - self.min_elevation) * 255)
 
-#class MapImage:
+class MapImage:
 
-    #""" this class is the image of the map """
+    """ this class is the image of the map """
     #bring in self, the map, and the name of the picture you are making?
-    #def __init__(self, map):
+    def __init__(self, map):
         
-        #self.map = map
+        self.map = map
         #make a new image when this is called. so Image.new('RGBA', width and height of image)
-        #self.im = Image.new('RGBA', (len(self.map.get_elevations[0]), len(self.map.get_elevations)))
+        self.im = Image.new('RGBA', (len(self.map.elevations[0]), len(self.map.elevations)))
 
     
-    #def draw_the_map(self):
+    def draw_the_map(self):
         #do putpixel
-        #for x in range(len(self.map.get_elevations())):
-            #for y in range(len(self.map.get_elevations())):
-                #self.im.putpixel((x, y), (128, 128, 128, self.map.get_intensity(x, y)), 'RGBA')
+        for x in range(len(self.map.get_elevations())):
+            for y in range(len(self.map.get_elevations())):
+                self.im.putpixel((x, y), (self.map.get_intensity(x, y), self.map.get_intensity(x, y), self.map.get_intensity(x, y)))
                 #save the image
-        #self.im.save('elevations_map.png')
+        self.im.save('elevations_map.png')
 
 
 class PathFinder:
@@ -65,6 +65,7 @@ class PathFinder:
 
 
 if __name__ == "__main__":
+
     map_key = Map('elevation_small.txt')
     print(map_key.get_intensity, map_key.get_max_elevation, map_key.get_min_elevation)
-    #make_map = MapImage(map_key)
+    make_map = MapImage(map_key)
